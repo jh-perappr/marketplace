@@ -1,0 +1,24 @@
+{
+  "name": "engineering",
+  "description": "Polyglot backend, frontend, and platform engineering agents with lightweight Crew Resource Management guidance and Playwright browser tooling for frontend work.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Anirudh",
+    "email": "ani1797@example.com"
+  },
+  "license": "MIT",
+  "keywords": [
+    "engineering",
+    "backend",
+    "frontend",
+    "platform",
+    "polyglot",
+    "crm",
+    "playwright"
+  ],
+  "agents": "agents/",
+  "skills": [
+    "skills/"
+  ],
+  "mcpServers": ".mcp.json"
+}

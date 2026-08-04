@@ -14,6 +14,12 @@
       "description": "Plugin for harness engineering and development, providing a comprehensive understanding of the harness project and its components, as well as tools for efficient development and testing.",
       "version": "0.1.2",
       "source": "./plugins/forge"
+    },
+    {
+      "name": "engineering",
+      "description": "Polyglot backend, frontend, and platform engineering agents with lightweight Crew Resource Management guidance and Playwright browser tooling for frontend work.",
+      "version": "0.1.0",
+      "source": "./plugins/engineering"
     }
   ]
 }
