@@ -12,7 +12,7 @@
     {
       "name": "forge",
       "description": "Plugin for harness engineering and development, providing a comprehensive understanding of the harness project and its components, as well as tools for efficient development and testing.",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "source": "./plugins/forge"
     }
   ]

@@ -1,13 +1,18 @@
 {
   "name": "forge",
   "description": "Starter plugin providing a basic custom agent and skill",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": {
     "name": "Anirudh",
     "email": "ani1797@example.com"
   },
   "license": "MIT",
-  "keywords": ["starter", "forge"],
+  "keywords": [
+    "starter",
+    "forge"
+  ],
   "agents": "agents/",
-  "skills": ["skills/"]
+  "skills": [
+    "skills/"
+  ]
 }
