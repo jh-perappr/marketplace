@@ -1,0 +1,19 @@
+{
+  "name": "marketplace",
+  "owner": {
+    "name": "Prince Varghese Perapadan",
+    "email": "jh-perappr@noreply.github.com"
+  },
+  "metadata": {
+    "description": "Custom Copilot CLI plugin marketplace for the harness project",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "forge",
+      "description": "Forge plugin: starter custom agent and skill for GitHub Copilot CLI",
+      "version": "0.1.0",
+      "source": "./plugins/forge"
+    }
+  ]
+}
