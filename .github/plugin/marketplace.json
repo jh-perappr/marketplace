@@ -11,7 +11,7 @@
   "plugins": [
     {
       "name": "forge",
-      "description": "Forge plugin: starter custom agent and skill for GitHub Copilot CLI",
+      "description": "Plugin for harness engineering and development, providing a comprehensive understanding of the harness project and its components, as well as tools for efficient development and testing.",
       "version": "0.1.0",
       "source": "./plugins/forge"
     }

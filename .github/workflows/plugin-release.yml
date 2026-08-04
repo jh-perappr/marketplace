@@ -1,0 +1,167 @@
+name: Plugin Release
+
+# Bumps the semver version of any plugin under plugins/<name> whose files
+# changed in a push to main (i.e. a merged PR), and keeps
+# .github/plugin/marketplace.json in sync with each plugin's version.
+#
+# Rules:
+#  - If a commit already changed the "version" field in plugins/<name>/plugin.json,
+#    that version is respected as-is (manual bump wins, no double bump).
+#  - Otherwise, if any other file under plugins/<name>/ changed, the patch
+#    version is auto-incremented (x.y.z -> x.y.(z+1)).
+#  - Each release commit/tag is created with "[skip release]" in the message
+#    so it does not re-trigger this workflow (infinite loop guard), and the
+#    workflow also ignores commits made by github-actions[bot].
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "plugins/**"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: plugin-release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  detect:
+    if: >
+      github.actor != 'github-actions[bot]' &&
+      !contains(github.event.head_commit.message, '[skip release]')
+    runs-on: ubuntu-latest
+    outputs:
+      plugins: ${{ steps.changed.outputs.plugins }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine changed plugins
+        id: changed
+        env:
+          BEFORE_SHA: ${{ github.event.before }}
+        run: |
+          set -euo pipefail
+          BEFORE="$BEFORE_SHA"
+          if [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            BEFORE=$(git rev-list --max-parents=0 HEAD)
+          fi
+
+          CHANGED_FILES=$(git diff --name-only "$BEFORE" "${{ github.sha }}" -- plugins/ || true)
+
+          PLUGINS=$(echo "$CHANGED_FILES" \
+            | awk -F/ 'NF>=2 {print $2}' \
+            | sort -u \
+            | jq -R -s -c 'split("\n") | map(select(length > 0))')
+
+          echo "Changed plugins: $PLUGINS"
+          echo "plugins=$PLUGINS" >> "$GITHUB_OUTPUT"
+
+  release:
+    needs: detect
+    if: needs.detect.outputs.plugins != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 1
+      matrix:
+        plugin: ${{ fromJson(needs.detect.outputs.plugins) }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
+
+      - name: Bump version for ${{ matrix.plugin }}
+        id: bump
+        env:
+          BEFORE_SHA: ${{ github.event.before }}
+          PLUGIN: ${{ matrix.plugin }}
+        run: |
+          set -euo pipefail
+          PLUGIN_DIR="plugins/$PLUGIN"
+          PLUGIN_JSON="$PLUGIN_DIR/plugin.json"
+
+          if [ ! -f "$PLUGIN_JSON" ]; then
+            echo "No plugin.json found for $PLUGIN (likely deleted), skipping"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          BEFORE="$BEFORE_SHA"
+          if [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            BEFORE=$(git rev-list --max-parents=0 HEAD)
+          fi
+
+          VERSION_DIFF=$(git diff "$BEFORE" "${{ github.sha }}" -- "$PLUGIN_JSON" \
+            | grep -E '^[+-].*"version"' || true)
+
+          CURRENT_VERSION=$(jq -r '.version' "$PLUGIN_JSON")
+
+          if [ -n "$VERSION_DIFF" ]; then
+            echo "Version manually changed for $PLUGIN in this push, keeping as-is: $CURRENT_VERSION"
+            NEW_VERSION="$CURRENT_VERSION"
+            echo "manual=true" >> "$GITHUB_OUTPUT"
+          else
+            IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT_VERSION"
+            NEW_VERSION="$MAJOR.$MINOR.$((PATCH + 1))"
+            jq --arg v "$NEW_VERSION" '.version = $v' "$PLUGIN_JSON" > /tmp/plugin.json.tmp
+            mv /tmp/plugin.json.tmp "$PLUGIN_JSON"
+            echo "Bumped $PLUGIN: $CURRENT_VERSION -> $NEW_VERSION"
+            echo "manual=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          echo "skip=false" >> "$GITHUB_OUTPUT"
+          echo "new_version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Sync marketplace.json
+        if: steps.bump.outputs.skip != 'true'
+        env:
+          PLUGIN: ${{ matrix.plugin }}
+          NEW_VERSION: ${{ steps.bump.outputs.new_version }}
+        run: |
+          set -euo pipefail
+          MARKETPLACE=".github/plugin/marketplace.json"
+          if [ -f "$MARKETPLACE" ]; then
+            jq --arg name "$PLUGIN" --arg v "$NEW_VERSION" \
+              '(.plugins[] | select(.name == $name) | .version) = $v' \
+              "$MARKETPLACE" > /tmp/marketplace.json.tmp
+            mv /tmp/marketplace.json.tmp "$MARKETPLACE"
+          fi
+
+      - name: Commit and tag release
+        if: steps.bump.outputs.skip != 'true' && steps.bump.outputs.manual != 'true'
+        env:
+          PLUGIN: ${{ matrix.plugin }}
+          NEW_VERSION: ${{ steps.bump.outputs.new_version }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add "plugins/$PLUGIN/plugin.json" .github/plugin/marketplace.json
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit for $PLUGIN"
+            exit 0
+          fi
+
+          git commit -m "chore($PLUGIN): release v$NEW_VERSION [skip release]"
+          git tag "$PLUGIN-v$NEW_VERSION"
+
+          for i in 1 2 3 4 5; do
+            git pull --rebase origin main && git push origin main --tags && break
+            echo "Push attempt $i failed, retrying..."
+            sleep 3
+          done
+
+      - name: Create GitHub Release
+        if: steps.bump.outputs.skip != 'true' && steps.bump.outputs.manual != 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: "${{ matrix.plugin }}-v${{ steps.bump.outputs.new_version }}"
+          name: "${{ matrix.plugin }} v${{ steps.bump.outputs.new_version }}"
+          generate_release_notes: true
