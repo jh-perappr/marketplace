@@ -1,7 +1,7 @@
 {
   "name": "forge",
   "description": "Starter plugin providing a basic custom agent and skill",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "author": {
     "name": "Anirudh",
     "email": "ani1797@example.com"
