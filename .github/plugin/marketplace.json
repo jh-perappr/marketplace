@@ -18,7 +18,7 @@
     {
       "name": "engineering",
       "description": "End-to-end engineering delivery team with a non-coding program manager, solution architecture and GRC specialists, OKF-style evidence-backed docs, Mermaid diagram validation, polyglot backend/frontend/platform engineers, CRM guidance, and Playwright tooling.",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "source": "./plugins/engineering"
     }
   ]
