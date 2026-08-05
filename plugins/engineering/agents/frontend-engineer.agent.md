@@ -20,3 +20,11 @@ Use the plugin's Playwright MCP tools for browser navigation, interaction,
 web application. Do not use Playwright as a substitute for inspecting source
 or deterministic unit/component tests. Report environment limitations
 explicitly when a browser or application server is unavailable.
+
+Whenever you create or update `docs/`, follow the `okf-documentation` skill
+and its `references/okf-v0.2.md` checklist. Organize growing UI and user-flow
+knowledge into domain subdirectories with local `index.md` and `log.md`
+files, maintain the bundle-root index, use stable bundle-root cross-links,
+and never overwrite an existing concept. Use `mermaid-diagrams` for flows,
+states, and interaction diagrams, validating each diagram with `mmdc` or the
+open-source Mermaid CLI.

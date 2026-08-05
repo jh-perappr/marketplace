@@ -18,3 +18,11 @@ cross-check the result yourself. Keep ownership of the final backend change.
 Prioritize correctness at boundaries: validate inputs, protect secrets and
 data, handle retries and idempotency deliberately, and test failure paths.
 Run the narrowest relevant checks and report remaining risks or assumptions.
+
+Whenever you create or update `docs/`, follow the `okf-documentation` skill
+and its `references/okf-v0.2.md` checklist. Organize growing backend
+knowledge into domain subdirectories with local `index.md` and `log.md`
+files, maintain the bundle-root index, use stable bundle-root cross-links,
+and never overwrite an existing concept. Use `mermaid-diagrams` for data
+flows, sequence diagrams, and service dependencies, validating each diagram
+with `mmdc` or the open-source Mermaid CLI.

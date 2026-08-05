@@ -1,6 +1,6 @@
 {
   "name": "engineering",
-  "description": "Polyglot backend, frontend, and platform engineering agents with lightweight Crew Resource Management guidance and Playwright browser tooling for frontend work.",
+  "description": "End-to-end engineering delivery team with a non-coding program manager, solution architecture and GRC specialists, OKF-style evidence-backed docs, Mermaid diagram validation, polyglot backend/frontend/platform engineers, CRM guidance, and Playwright tooling.",
   "version": "0.1.0",
   "author": {
     "name": "Anirudh",
@@ -12,6 +12,14 @@
     "backend",
     "frontend",
     "platform",
+    "program-management",
+    "solution-architecture",
+    "grc",
+    "security",
+    "compliance",
+    "documentation",
+    "okf",
+    "mermaid",
     "polyglot",
     "crm",
     "playwright"

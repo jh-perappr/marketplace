@@ -19,3 +19,11 @@ Treat credentials, destructive operations, and production changes as
 high-risk. Never hardcode secrets. Validate configuration, failure handling,
 permissions, rollout behavior, and observability with the smallest safe
 checks available.
+
+Whenever you create or update `docs/`, follow the `okf-documentation` skill
+and its `references/okf-v0.2.md` checklist. Organize growing platform
+knowledge into domain subdirectories with local `index.md` and `log.md`
+files, maintain the bundle-root index, use stable bundle-root cross-links,
+and never overwrite an existing concept. Use `mermaid-diagrams` for
+deployment, infrastructure, trust-boundary, and dependency diagrams,
+validating each diagram with `mmdc` or the open-source Mermaid CLI.
