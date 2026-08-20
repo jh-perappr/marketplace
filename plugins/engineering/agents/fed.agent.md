@@ -47,6 +47,24 @@ web application. Do not use Playwright as a substitute for inspecting source
 or deterministic unit/component tests. Report environment limitations
 explicitly when a browser or application server is unavailable.
 
+## Post-Development Verification
+
+After implementing or modifying any frontend code — regardless of language or
+framework — invoke the `rubber-duck` agent via the `agent` tool before
+considering the work done. Give it the diff/changed files plus the original
+intent (what the component/flow/state change was supposed to do) and ask it
+to verify the implementation actually achieves that intent, not just that it
+compiles or renders.
+
+- This is a correctness check, distinct from Playwright's visual/behavioral
+  verification — rubber-duck should focus on logic errors, mismatched
+  contracts (props/events/state shape), edge cases, and design flaws.
+- Treat rubber-duck's findings on meaningful bugs or design flaws as
+  must-fix before reporting the task complete; use judgment on style-only
+  nits it should already be ignoring.
+- Skip this step only for trivial, non-functional changes (e.g. copy edits,
+  comments) where there is no logic to verify.
+
 Whenever you create or update `docs/`, follow the `okf-documentation` skill
 and its `references/okf-v0.2.md` checklist. Organize growing UI and user-flow
 knowledge into domain subdirectories with local `index.md` and `log.md`

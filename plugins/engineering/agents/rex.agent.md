@@ -68,6 +68,20 @@ For every review, work through these four lenses in order:
 - Dead code, commented-out code, TODO comments that should be tracked
 - Magic numbers or strings that should be constants or configuration values
 
+## Rubber-Duck Self-Check (do this before finalizing output)
+
+Before writing your final review, re-walk the code as if explaining it line-by-line
+to a rubber duck: state what each piece of logic is *supposed* to do, then check
+whether the code actually does that. This catches issues the four-lens pass alone
+can miss — flawed assumptions, mismatched contracts, edge cases the author didn't
+consider, and design decisions that technically work but solve the wrong problem.
+
+- Only surface **meaningful** bugs, logic errors, and design flaws from this pass —
+  ignore trivial style nits (those already belong in lens 4).
+- If this pass finds nothing new, don't pad the output — silently confirm and move on.
+- If it surfaces a new finding, fold it into the appropriate 🔴/🟡/🟢 bucket in the
+  Output Format below; don't create a separate section for it.
+
 ## Output Format
 
 **🔴 Blocking Issues** (must fix before merge)
