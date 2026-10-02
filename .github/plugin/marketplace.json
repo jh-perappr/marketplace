@@ -16,7 +16,7 @@
       "source": "./plugins/forge"
     },
     {
-      "name": "engineering",
+      "name": "teamsOps",
       "description": "End-to-end engineering delivery team with a non-coding program manager, solution architecture and GRC specialists, OKF-style evidence-backed docs, Mermaid diagram validation, polyglot backend/frontend/platform engineers, CRM guidance, and Playwright tooling.",
       "version": "0.1.3",
       "source": "./plugins/engineering"
